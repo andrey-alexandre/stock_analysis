@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+     nginx:
+      build: ./nginx/
+      container_name: stockex-nginx-container
+      ports:
+       - 80:80
+      links:
+       - php
+      volumes_from:
+       - app-data
+
+     php:
+      build: ./php/
+      container_name: stockex-php-container
+      expose:
+       - 9000
+      links:
+       - mysql
+      volumes_from:
+       - app-data
+
+     app-data:
+      image: php:7.0-fpm
+      container_name: stockex-data-container
+      volumes:
+       - ./www/html/:/var/www/html/
+      command: "true"
+
+     postgres:
+      image: postgres:13
+      container_name: stockex-postgres-container
+      ports:
+       - 5432:5432
+      environment:
+       POSTGRES_USER: myuser
+       POSTGRES_PASSWORD: password
